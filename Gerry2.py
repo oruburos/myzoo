@@ -20,7 +20,7 @@ class GerryScenario(BaseScenario):
         num_agents = num_adversaries + num_good_agents
         #num_landmarks = num_landmarks
         num_landmarks = 3
-        print("current landmark", str(num_landmarks))
+      #  print("current landmark", str(num_landmarks))
 
         # add agents
         world.agents = [Agent() for i in range(num_agents)]
@@ -41,12 +41,12 @@ class GerryScenario(BaseScenario):
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
-            print("current landmark", str(i))
+            # print("current landmark", str(i))
             landmark.name = 'landmark %d' % i
             landmark.collide = True
             landmark.movable = False
             landmark.size = 0.2
-            landmark.boundary = False
+            landmark.boundary = True
         return world
 
     def set_boundaries(self, world):
@@ -79,10 +79,21 @@ class GerryScenario(BaseScenario):
 
     def checkDistricts(self, world, np_random):
         for i, landmark in enumerate(world.landmarks):
-            print("current landmark", str(i))
+            #print("current landmark", str(i))
             landmark.color = np.array([0.25, 0.25, 0.25])
             # landmark.state.p_pos = [i*10,i*10]
             landmark.state.p_pos = np_random.uniform(-5, +5, world.dim_p)
+
+
+        # assuming 3 districts
+        print("checking locations")
+        if (self.is_collision( world.landmarks[0] ,world.landmarks[1]  )):
+            print("regenerate district 1")
+        elif (self.is_collision(world.landmarks[2], world.landmarks[1])):
+            print("regenerate district 2")
+
+
+
 
 
     def reset_world(self, world, np_random):
@@ -90,11 +101,7 @@ class GerryScenario(BaseScenario):
         for i, agent in enumerate(world.agents):
             agent.color = np.array([1, 0, 0]) if not agent.adversary else np.array([0., 0, 1])
             # random properties for landmarks
-        for i, landmark in enumerate(world.landmarks):
-            print("current landmark", str(i))
-            landmark.color = np.array([0.25, 0.25, 0.25])
-            #landmark.state.p_pos = [i*10,i*10]
-            landmark.state.p_pos =np_random.uniform(-5, +5, world.dim_p)
+
         self.checkDistricts(world, np_random)
         for agent in world.agents :
             agent.state.p_pos = np_random.uniform(-1, +1, world.dim_p)

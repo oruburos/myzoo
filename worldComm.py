@@ -21,9 +21,9 @@ for agent in env.agent_iter():
         env.step(action)
 
     else:
-        print(observation)
-        print(reward)
-        print(info)
+    #    print(observation)
+    #    print(reward)
+    #    print(info)
         env.step(None)
 
     frame = env.render(mode='rgb_array')
