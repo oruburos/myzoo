@@ -197,7 +197,7 @@ class SimpleGerryEnv(AECEnv):
         radius_x = pos[0]
         radius_y = pos[1]
 
-        randomVertices = [(radius_x -.5,radius_y -.5 ),(radius_x -.5,radius_y +.5 ),(radius_x +.5,radius_y +.5 ),(radius_x +.5,radius_y +.5 )]
+        randomVertices = [(radius_x -.5,radius_y -.5 ),(radius_x -.5,radius_y +.5 ),(radius_x +.5,radius_y +.5 ),(radius_x +.5,radius_y -.5 )]
         return randomVertices
 
     def render(self, mode='human'):
