@@ -241,9 +241,6 @@ class SimpleGerryEnv(AECEnv):
                     self.viewer.text_lines.append(tline)
                     idx += 1
 
-            for landmark in self.world.landmarks:
-
-                    tline = self.viewer.draw_polygon( [(0,0),(1,2),(3,2),(4,2)])
 
         alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         for idx, other in enumerate(self.world.agents):
