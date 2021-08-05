@@ -7,6 +7,8 @@ from SimpleGerryEnv import SimpleGerryEnv, make_env
 from pettingzoo.utils.conversions import parallel_wrapper_fn
 from pettingzoo.mpe._mpe_utils.rendering import Viewer
 
+
+
 class GerryScenario(BaseScenario):
     def make_world(self, num_good_agents=0, num_adversaries=1, num_landmarks=30, num_food=0, num_forests=0):
         world = World()
@@ -75,6 +77,14 @@ class GerryScenario(BaseScenario):
 
         return boundary_list
 
+    def checkDistricts(self, world, np_random):
+        for i, landmark in enumerate(world.landmarks):
+            print("current landmark", str(i))
+            landmark.color = np.array([0.25, 0.25, 0.25])
+            # landmark.state.p_pos = [i*10,i*10]
+            landmark.state.p_pos = np_random.uniform(-5, +5, world.dim_p)
+
+
     def reset_world(self, world, np_random):
         # random properties for agents
         for i, agent in enumerate(world.agents):
@@ -83,7 +93,9 @@ class GerryScenario(BaseScenario):
         for i, landmark in enumerate(world.landmarks):
             print("current landmark", str(i))
             landmark.color = np.array([0.25, 0.25, 0.25])
-            landmark.state.p_pos = [i*4,i*4]
+            #landmark.state.p_pos = [i*10,i*10]
+            landmark.state.p_pos =np_random.uniform(-5, +5, world.dim_p)
+        self.checkDistricts(world, np_random)
         for agent in world.agents :
             agent.state.p_pos = np_random.uniform(-1, +1, world.dim_p)
             agent.state.p_vel = np.zeros(world.dim_p)
@@ -91,6 +103,7 @@ class GerryScenario(BaseScenario):
         for i, landmark in enumerate(world.landmarks):
             landmark.state.p_pos = np_random.uniform(-0.2, +0.9, world.dim_p)
             landmark.state.p_vel = np.zeros(world.dim_p)
+
 
 
     def benchmark_data(self, agent, world):
