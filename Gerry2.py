@@ -47,7 +47,7 @@ class GerryScenario(BaseScenario):
             landmark.collide = True
             landmark.movable = False
             landmark.size = size_district
-            landmark.boundary = True
+            landmark.boundary = False
         return world
 
     def set_boundaries(self, world):
@@ -82,18 +82,11 @@ class GerryScenario(BaseScenario):
         for i, landmark in enumerate(world.landmarks):
             #print("current landmark", str(i))
             landmark.color = np.array([0.25, 0.25, 0.25])
-            # landmark.state.p_pos = [i*10,i*10]
-            landmark.state.p_pos = np_random.uniform(-5, +5, world.dim_p)
-
+           # landmark.state.p_pos = [i*.1,i*.1]
+            landmark.state.p_pos = np_random.uniform(-15, +15, world.dim_p)
 
         # assuming 3 districts
         print("checking locations")
-
-
-        delta_pos = world.landmarks[0].state.p_pos - world.landmarks[1].state.p_pos
-        dist = np.sqrt(np.sum(np.square(delta_pos)))
-        dist_min = world.landmarks[0].size + world.landmarks[1].size
-
 
         if (self.inDistrict( world.landmarks[0] ,world.landmarks[1]  )):
             print("overlapping")
@@ -103,8 +96,23 @@ class GerryScenario(BaseScenario):
             print("regenerate district 2")
         print("cool")
 
+    def inDistrict(self, district1, district2):
 
+        centerDistrict1_x = district1.state.p_pos[0]
+        centerDistrict1_y = district1.state.p_pos[1]
+        centerDistrict2_x = district2.state.p_pos[0]
+        centerDistrict2_y = district2.state.p_pos[1]
 
+        sizeDistricts = district1.size
+        print(
+            f" center d1 {centerDistrict1_x} {centerDistrict1_y} center d2 {centerDistrict2_x} {centerDistrict2_y} size {sizeDistricts}")
+
+        if centerDistrict1_x + sizeDistricts > centerDistrict2_x - sizeDistricts:
+            return centerDistrict1_y + sizeDistricts < centerDistrict2_y - sizeDistricts
+        elif centerDistrict1_x - sizeDistricts < centerDistrict2_x + sizeDistricts:
+            return centerDistrict1_y + sizeDistricts < centerDistrict2_y - sizeDistricts
+
+        return False
 
     def reset_world(self, world, np_random):
         # random properties for agents
@@ -133,20 +141,7 @@ class GerryScenario(BaseScenario):
         else:
             return 0
 
-    def inDistrict(self, district1, district2):
 
-        centerDistrict1_x = district1.state.p_pos[0]
-        centerDistrict1_y = district1.state.p_pos[1]
-        centerDistrict2_x = district2.state.p_pos[0]
-        centerDistrict2_y = district2.state.p_pos[1]
-        sizeDistricts = district1.size
-
-        if centerDistrict1_x + sizeDistricts < centerDistrict2_x -sizeDistricts:
-            return centerDistrict1_y + sizeDistricts < centerDistrict2_y- sizeDistricts
-        elif centerDistrict1_x- sizeDistricts < centerDistrict2_x+sizeDistricts:
-            return centerDistrict1_y + sizeDistricts < centerDistrict2_y- sizeDistricts
-
-        return False
 
     def is_collision(self, agent1, agent2):
         delta_pos = agent1.state.p_pos - agent2.state.p_pos
