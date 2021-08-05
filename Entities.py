@@ -55,6 +55,9 @@ class Landmark(Entity):  # properties of landmark entities
     def __init__(self):
         super(Landmark, self).__init__()
 
+class District(Entity):  # properties of landmark entities
+    def __init__(self):
+        super(District, self).__init__()
 
 class Agent(Entity):  # properties of agent entities
     def __init__(self):

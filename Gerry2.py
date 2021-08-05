@@ -10,7 +10,7 @@ from pettingzoo.mpe._mpe_utils.rendering import Viewer
 
 
 class GerryScenario(BaseScenario):
-    def make_world(self, num_good_agents=0, num_adversaries=1, num_landmarks=30, num_food=0, num_forests=0):
+    def make_world(self, num_good_agents=0, num_adversaries=1, num_landmarks=30,size_district=1):
         world = World()
         # set any world properties first
         world.dim_c = 4
@@ -20,6 +20,7 @@ class GerryScenario(BaseScenario):
         num_agents = num_adversaries + num_good_agents
         #num_landmarks = num_landmarks
         num_landmarks = 3
+        size_district = size_district
       #  print("current landmark", str(num_landmarks))
 
         # add agents
@@ -36,7 +37,7 @@ class GerryScenario(BaseScenario):
             agent.silent = True if i > 0 else False
             agent.size = 0.1
             agent.accel = 1
-            agent.max_speed = 0.001
+            agent.max_speed = 0.01
 
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
@@ -45,7 +46,7 @@ class GerryScenario(BaseScenario):
             landmark.name = 'landmark %d' % i
             landmark.collide = True
             landmark.movable = False
-            landmark.size = 0.2
+            landmark.size = size_district
             landmark.boundary = True
         return world
 
@@ -87,11 +88,20 @@ class GerryScenario(BaseScenario):
 
         # assuming 3 districts
         print("checking locations")
-        if (self.is_collision( world.landmarks[0] ,world.landmarks[1]  )):
-            print("regenerate district 1")
-        elif (self.is_collision(world.landmarks[2], world.landmarks[1])):
-            print("regenerate district 2")
 
+
+        delta_pos = world.landmarks[0].state.p_pos - world.landmarks[1].state.p_pos
+        dist = np.sqrt(np.sum(np.square(delta_pos)))
+        dist_min = world.landmarks[0].size + world.landmarks[1].size
+
+
+        if (self.inDistrict( world.landmarks[0] ,world.landmarks[1]  )):
+            print("overlapping")
+            print("regenerate district 1")
+        elif (self.inDistrict(world.landmarks[2], world.landmarks[1])):
+            print("overlapping")
+            print("regenerate district 2")
+        print("cool")
 
 
 
@@ -122,6 +132,21 @@ class GerryScenario(BaseScenario):
             return collisions
         else:
             return 0
+
+    def inDistrict(self, district1, district2):
+
+        centerDistrict1_x = district1.state.p_pos[0]
+        centerDistrict1_y = district1.state.p_pos[1]
+        centerDistrict2_x = district2.state.p_pos[0]
+        centerDistrict2_y = district2.state.p_pos[1]
+        sizeDistricts = district1.size
+
+        if centerDistrict1_x + sizeDistricts < centerDistrict2_x -sizeDistricts:
+            return centerDistrict1_y + sizeDistricts < centerDistrict2_y- sizeDistricts
+        elif centerDistrict1_x- sizeDistricts < centerDistrict2_x+sizeDistricts:
+            return centerDistrict1_y + sizeDistricts < centerDistrict2_y- sizeDistricts
+
+        return False
 
     def is_collision(self, agent1, agent2):
         delta_pos = agent1.state.p_pos - agent2.state.p_pos
@@ -247,10 +272,10 @@ class GerryScenario(BaseScenario):
 
 
 class raw_env(SimpleGerryEnv):
-    def __init__(self, num_good=2, num_adversaries=4, num_obstacles=1, num_food=2, max_cycles=25, num_forests=2, continuous_actions=False):
+    def __init__(self, num_good=2, num_adversaries=2,  max_cycles=150,  continuous_actions=False):
         scenario = GerryScenario()
         print("after creating GerryMandering scenario")
-        world = scenario.make_world(num_good, num_adversaries, num_obstacles, num_food, num_forests)
+        world = scenario.make_world(num_good, num_adversaries, size_district=.5)
         super().__init__(scenario, world, max_cycles, continuous_actions)
         self.metadata['name'] = "GerryEnvironment"
 env = make_env(raw_env)
