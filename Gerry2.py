@@ -15,8 +15,8 @@ class GerryScenario(BaseScenario):
         # set any world properties first
         world.dim_c = 4
 
-        num_good_agents = 1
-        num_adversaries = 1
+        num_good_agents = 3
+        num_adversaries = 3
         num_agents = num_adversaries + num_good_agents
         #num_landmarks = num_landmarks
         num_landmarks = 3
@@ -35,9 +35,9 @@ class GerryScenario(BaseScenario):
             agent.collide = True
             agent.leader = True if i == 0 else False
             agent.silent = True if i > 0 else False
-            agent.size = 0.1
+            agent.size = 0.05
             agent.accel = 1
-            agent.max_speed = 0.01
+            agent.max_speed = 1
 
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]

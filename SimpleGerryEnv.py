@@ -62,6 +62,7 @@ class SimpleGerryEnv(AECEnv):
             if self.continuous_actions:
                 self.action_spaces[agent.name] = spaces.Box(low=0, high=1, shape=(space_dim,))
             else:
+                print("discrete")
                 self.action_spaces[agent.name] = spaces.Discrete(space_dim)
             self.observation_spaces[agent.name] = spaces.Box(low=-np.float32(np.inf), high=+np.float32(np.inf), shape=(obs_dim,), dtype=np.float32)
 
@@ -213,6 +214,23 @@ class SimpleGerryEnv(AECEnv):
             # from multiagent._mpe_utils import rendering
             self.render_geoms = []
             self.render_geoms_xform = []
+
+            grid_x = 10
+            grid_y = 10
+            grid_cell = .25
+
+            for i in np.arange(-5.0,5.0, grid_cell):
+                for j in np.arange(-5.0,5.0, grid_cell):
+                    geom = self.viewer.draw_line((i,j),(i + grid_cell,j))
+                    self.render_geoms.append(geom)
+                    geom = self.viewer.draw_line((i, j), (i, j-grid_cell))
+                    self.render_geoms.append(geom)
+                    geom = self.viewer.draw_line((i, j - grid_cell), (i+grid_cell, j-grid_cell))
+                    self.render_geoms.append(geom)
+                    geom = self.viewer.draw_line((i+grid_cell, j), (i+grid_cell, j-grid_cell))
+                    self.render_geoms.append(geom)
+
+
             for entity in self.world.entities:
                 geom = rendering.make_circle(entity.size)
                 xform = rendering.Transform()
@@ -258,13 +276,15 @@ class SimpleGerryEnv(AECEnv):
             self.viewer.text_lines[idx].set_text(message)
 
         # update bounds to center around agent
-        all_poses = [entity.state.p_pos for entity in self.world.entities]
-        cam_range = np.max(np.abs(np.array(all_poses))) + 1
-        self.viewer.set_max_size(cam_range)
+        #all_poses = [entity.state.p_pos for entity in self.world.entities]
+        #cam_range = np.max(np.abs(np.array(all_poses))) + 1
+        #print(cam_range)
+        self.viewer.set_max_size(2)
         # update geometry positions
         for e, entity in enumerate(self.world.entities):
             self.render_geoms_xform[e].set_translation(*entity.state.p_pos)
         # render to display or array
+
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
     # reset rendering assets
